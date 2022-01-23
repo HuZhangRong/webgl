@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+    // 顶点着色器代码 点形状
+   //  const vertexShaderSource = `
+	  // void main() {
+	  //   gl_PointSize = 5.0;
+	  //   gl_Position = vec4(0, 0, 0, 1);
+	  // }
+   //  `;
+	// 顶点着色器代码  三角形
+	const vertexShaderSource = `
+	  // 设置浮点数精度
+	  precision mediump float;
+	  // 接受 js 传过来的坐标
+	  attribute vec2 a_Position;
+	  void main() {
+	    gl_Position = vec4(a_Position, 0, 1);
+	  }
+	`;
+    // 片元着色器代码
+    const fragmentShaderSource = `
+	  void main() {
+	    gl_FragColor = vec4(1, 0, 0, 1);
+	  }
+    `;
+ 
+    // 根据源代码创建着色器对象
+    function createShader(gl, type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      return shader;
+    }
+ 
+    // 获取 canvas 并设置尺寸
+    const canvas = document.querySelector('#canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    // 获取 webgl 上下文
+    const gl = canvas.getContext('webgl');
+	
+
+	
+ 
+    // 创建顶点着色器对象
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    // 创建片元着色器对象
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+    // 创建 webgl 程序对象
+    const program = gl.createProgram();
+    // 绑定顶点着色器
+    gl.attachShader(program, vertexShader);
+    // 绑定片元着色器
+    gl.attachShader(program, fragmentShader);
+    // 链接程序
+    gl.linkProgram(program);
+    // 使用程序
+    gl.useProgram(program);
+	
+	//点形状开始===============
+	
+	// // 设置清空 canvas 画布的颜色
+	// gl.clearColor(1, 1, 1, 1);
+	// // 清空画布
+	// gl.clear(gl.COLOR_BUFFER_BIT);
+	// // 绘制一个点
+	// gl.drawArrays(gl.POINTS, 0, 1);
+	
+	//点形状结束===============
+	
+	//三角形状开始===============
+	
+	// const points = [
+	//   -0.5, 0, // 第 1 个顶点
+	//   0.5, 0, // 第 2 个顶点
+	//   0, 0.5 // 第 3 个顶点
+	// ];
+	const points = [
+	  -0.2, 0.2, // p1
+	  -0.2, -0.2, // p2
+	  0.2, -0.2, // p3
+	  0.2, -0.2, // p4
+	  0.2, 0.2, // p5
+	  -0.2, 0.2 // p6
+	];
+	 
+	// 创建 buffer
+	const buffer = gl.createBuffer();
+	// 绑定buffer为当前缓冲区
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+	// 获取程序中的 a_Position 变量
+	const a_Position = gl.getAttribLocation(program, 'a_Position');
+	// 激活 a_Position
+	gl.enableVertexAttribArray(a_Position);
+	// 指定 a_Position 从 buffer 获取数据的方式
+	gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+	// 给 buffer 灌数据
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points), gl.STATIC_DRAW);
+	// 设置清空 canvas 画布的颜色
+	gl.clearColor(1, 1, 1, 1);
+	// 清空画布
+	gl.clear(gl.COLOR_BUFFER_BIT);
+	// 绘制三角形
+	gl.drawArrays(gl.TRIANGLES, 0, points.length / 2);
+	
+	//三角形状开始===============
+	
+	//正方形=====开始====
+	// const points = [
+	//   -0.2, 0.2, // p1
+	//   -0.2, -0.2, // p2
+	//   0.2, -0.2, // p3
+	//   0.2, 0.2, // p4
+	// ];
+	 
+	// // 根据 points 中的 index 设置索引
+	// const indices = [
+	//   0, 1, 2, // 第一个三角形
+	//   2, 3, 0 // 第二个三角形
+	// ];
+	 
+	// // 创建 buffer
+	// const buffer = gl.createBuffer();
+	// // 绑定buffer为当前缓冲区
+	// gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+	// // 获取程序中的 a_Position 变量
+	// const a_Position = gl.getAttribLocation(program, 'a_Position');
+	// // 激活 a_Position
+	// gl.enableVertexAttribArray(a_Position);
+	// // 指定 a_Position 从 buffer 获取数据的方式
+	// gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+	// // 给 buffer 灌数据
+	// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points), gl.STATIC_DRAW);
+	 
+	// // 创建索引 buffer
+	// const indicesBuffer = gl.createBuffer();
+	// // 绑定索引 buffer
+	// gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesBuffer);
+	// // 灌数据
+	// gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+	 
+	// // 设置清空 canvas 画布的颜色
+	// gl.clearColor(1, 1, 1, 1);
+	// // 清空画布
+	// gl.clear(gl.COLOR_BUFFER_BIT);
+	// // 绘制三角形
+	// gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+	//正方形结束=========
+  </script>
+</body>
+</html>
